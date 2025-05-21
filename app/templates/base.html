@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    {% if title %}
+    <title>{{ title }} - MEW</title>
+    {% else %}
+    <title>Bem vindo ao MEW</title>
+    {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm relative z-60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+            <div class="flex justify-between h-24 items-center">
+                <!-- Logo/Title -->
+                <div class="flex-shrink-0 flex items-center">
+                    <h1 class="text-xl font-bold text-gray-900">
+                        <a href="{{ url_for('index') }}" class="hover:opacity-80 transition-opacity">
+                            <img class="h-12 w-auto" src="https://cdn.discordapp.com/attachments/1345098481336844389/1370145854698164314/cat.png?ex=681e6f43&is=681d1dc3&hm=70901c27363f290b3c22b315116a60a070499b2b2bec0442db722d58e70cef6b&" alt="Mew Logo">
+                          </a>
+                    </h1>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <a href="{{ url_for('index') }}"
+                        class="{{ 'border-blue-500 text-gray-900' if request.endpoint == 'index' else 'border-transparent text-gray-500' }} inline-flex items-center px-1 pt-1 border-b-2 text-lg font-medium hover:border-blue-300 hover:text-blue-700 transition-colors">
+                        Home
+                    </a>
+                    <a href="{{ url_for('profile_items') }}"
+                        class="{{ 'border-blue-500 text-gray-900' if request.endpoint == 'profile_items' else 'border-transparent text-gray-500' }} inline-flex items-center px-1 pt-1 border-b-2 text-lg font-medium hover:border-gray-300 hover:text-gray-700 transition-colors">
+                        Itens Pets
+                    </a>
+                </nav>
+
+                <!-- Auth Links -->
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    {% if current_user.is_anonymous %}
+                    <a href="{{ url_for('login') }}"
+                        class="{{ 'border-blue-500 text-gray-900' if request.endpoint == 'login' else 'border-transparent text-gray-500' }} inline-flex items-center px-1 pt-1 border-b-2 text-lg font-medium hover:border-gray-300 hover:text-gray-700 transition-colors">
+                        Login
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('user', username=current_user.username) }}"
+                        class="{{ 'border-blue-500 text-gray-900' if request.endpoint == 'user' else 'border-transparent text-gray-500' }} inline-flex items-center px-1 pt-1 border-b-2 text-lg font-medium hover:border-gray-300 hover:text-gray-700 transition-colors">
+                        Perfil
+                    </a>
+                    <a href="{{ url_for('logout') }}"
+                        class="ml-4 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-lg font-medium transition-colors">
+                        Logout
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Hamburger icon -->
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu (hidden by default) -->
+        <div class="sm:hidden hidden" id="mobile-menu">
+            <div class="pt-2 pb-3 space-y-1">
+                <a href="{{ url_for('index') }}"
+                    class="bg-blue-50 border-blue-500 text-blue-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    Home
+                </a>
+                <a href="{{ url_for('profile_items') }}"
+                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    Itens Pets
+                </a>
+                {% if current_user.is_anonymous %}
+                <a href="{{ url_for('login') }}"
+                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    Login
+                </a>
+                {% else %}
+                <a href="{{ url_for('user', username=current_user.username) }}"
+                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    Perfil
+                </a>
+                <a href="{{ url_for('logout') }}"
+                    class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                    Logout
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <!-- Info icon -->
+                    <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <ul class="list-disc pl-5 space-y-1">
+                        {% for message in messages %}
+                        <li class="text-sm text-blue-700">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>
